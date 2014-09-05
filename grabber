@@ -45,7 +45,6 @@ dest_file="$5"
 delay_interval="$6"
 ip_list=($( dig $host | 
 	egrep -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | 
-	sed '1d' | 
 	awk '{printf $5"\n"}'));	## performing dig command to extract all ip's under $host variable
 										## and after that performing sed to remove the 1st line which contains the name
 										## leaving only the ip's which will enter into the ip_list array.
