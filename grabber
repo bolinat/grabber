@@ -1,8 +1,9 @@
 #!/bin/bash
 
 ## grabber - grabs all sites from a specified name on the command line
-## then grabs a certain file mentioned on the command line
+## then grabs a certain string from a file mentioned on the command line
 ## to local location
+## written by Ofir Elhayani sept 5th 2014
 
 Error_msg()															## Error msg procedure to produce error messages upon missing parameters
 {
