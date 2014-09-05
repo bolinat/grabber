@@ -11,5 +11,5 @@ it receives from the user a few parameters:
 5. the destination file to write the grabbes string into
 6. delay interval in case you want to run it every n seconds.
 
-usage: grabber <user> <host> <sourcefile> <string> <destfile> <delay>
+usage: "grabber <user> <host> <sourcefile> <string> <destfile> <delay>"
 
