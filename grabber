@@ -1,0 +1,69 @@
+#!/bin/bash
+
+## grabber - grabs all sites from a specified name on the command line
+## then grabs a certain file mentioned on the command line
+## to local location
+
+Error_msg()															## Error msg procedure to produce error messages upon missing parameters
+{
+usage=$(echo  "grabber <user> <host> <source file> <string> <dest_file> <delay interval>\nuse grabber -h or --help for usage");	## or issuing usage message in case of -h\--help switch
+if [[ $user = "-h" ]] || [[ $user = "--help" ]] 
+then
+echo $usage;
+fi
+[[ $err -eq 10 ]] && echo -e "error: no user entered.\n$usage" && exit 1
+[[ $err -eq 11 ]] && echo -e "error: no host entered.\n$usage" && exit 1
+[[ $err -eq 12 ]] && echo -e "error: no source file entered.\n$usage" && exit 1
+[[ $err -eq 13 ]] && echo -e "error: no string entered.\n$usage" && exit 1
+[[ $err -eq 14 ]] && echo -e "error: no destination file entered.\n$usage" && exit 1
+}
+
+Execute()							## the general execute procedure to connect to host while bypassing the "known hosts" file.
+{
+count=0
+	for ip in "${ip_list[@]}"
+	do
+		ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/tmp/known -o PasswordAuthentication=no $user@$host cat $source_file | grep $String >> $dest_file
+		# echo $ip
+	done
+}
+
+Loop_Execute()
+{
+while true
+do
+Execute
+sleep $delay_interval
+done
+}
+
+user="$1"
+host="$2"
+source_file="$3"
+String="$4"
+dest_file="$5"
+delay_interval="$6"
+ip_list=($( dig $host | 
+	egrep -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | 
+	sed '1d' | 
+	awk '{printf $5"\n"}'));	## performing dig command to extract all ip's under $host variable
+										## and after that performing sed to remove the 1st line which contains the name
+										## leaving only the ip's which will enter into the ip_list array.
+case $user in
+
+"-h"|"--help") Error_msg;;
+esac
+
+[[ -z $1 ]] && err=10 && Error_msg;		##ERROR codes for handling missing parameters
+[[ -z $2 ]] && err=11 && Error_msg;
+[[ -z $3 ]] && err=12 && Error_msg;
+[[ -z $4 ]] && err=13 && Error_msg;
+[[ -z $5 ]] && err=14 && Error_msg;
+[[ -z $6 ]] && Execute || Loop_Execute;
+
+
+echo "totally extracted from "${#ip_list[@]}" hosts"		## prints stdout of number of hosts that were contacted	
+
+
+
+
